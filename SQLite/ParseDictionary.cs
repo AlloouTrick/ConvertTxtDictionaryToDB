@@ -22,6 +22,7 @@ namespace ConvertTxtDictionaryToDB.SQLite
             string wordMetaData = string.Empty;
             List<string> definition = new List<string>();
             List<string> noMetaData = new List<string>(); // Used for output to the console
+            List<Words> wordsList = new List<Words>();
 
             line = reader.ReadLine(); // prime the loop
             while (true) // begin
@@ -31,7 +32,7 @@ namespace ConvertTxtDictionaryToDB.SQLite
 
                 word = string.Empty;
                 wordMetaData = string.Empty;
-                definition = new List<string>();
+                definition.Clear();
 
                 if (line.All(char.IsUpper))
                 {
@@ -59,14 +60,18 @@ namespace ConvertTxtDictionaryToDB.SQLite
 
                     if (definition.Count > 0 && word != string.Empty && wordMetaData != string.Empty)
                     {
-                        context.Words.Add(wordBuilder.BuildWord(word, definition, wordMetaData));
+                        wordsList.Add(wordBuilder.BuildWord(word, definition, wordMetaData));
+                        //context.Words.Add(wordBuilder.BuildWord(word, definition, wordMetaData));
                         Console.WriteLine(word);
                     }
                     else
                     {
-                        context.Words.Add(wordBuilder.BuildWord(word, definition));
+                        wordsList.Add(wordBuilder.BuildWord(word, definition));
+                        //context.Words.Add(wordBuilder.BuildWord(word, definition));
                         noMetaData.Add(word);
                     }
+
+
                 }
             }
             Console.ForegroundColor = ConsoleColor.Red;
@@ -75,6 +80,10 @@ namespace ConvertTxtDictionaryToDB.SQLite
             Console.ResetColor();
 
             Console.WriteLine("Saving database...");
+            for(int i = 0; i < wordsList.Count; i++)
+            {
+                context.Words.Add(wordsList[i]);
+            }
             context.SaveChanges(); 
             Console.WriteLine("Save complete!");
 
